@@ -1,0 +1,11 @@
+{% extends 'index.html' %}
+
+{% block content %}
+
+    {% if name %}
+        <p> Welcome {{name}}</p>
+    {% else %}
+        <p>Enter your <a href="login">Name</a></p>
+
+    {% endif %}
+{% endblock %}

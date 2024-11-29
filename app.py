@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, redirect, render_template, request, url_for
 
 app = Flask(__name__)
 
@@ -9,9 +9,17 @@ def index():
 
 
 #login route
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    if request.method=='POST':
-       return "400" 
-
+@app.route("/login", methods=['GET','POST'])
+def login():   
+    if request.method == 'POST':
+        name = request.form.get("username")    
+        return redirect(url_for('home', name=name))
     return render_template("login.html")
+
+#Home page
+@app.route("/home")
+def home():
+    name = request.args.get("name")
+    return render_template("home.html", name=name)
+        
+
