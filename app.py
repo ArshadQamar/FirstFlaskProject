@@ -21,5 +21,8 @@ def login():
 def home():
     name = request.args.get("name")
     return render_template("home.html", name=name)
-        
 
+#logout
+@app.route("/logout")
+def logout():
+    return redirect(url_for('login'))
