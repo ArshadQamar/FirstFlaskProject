@@ -2,8 +2,15 @@
 
 {% block content %}
     <form action="/login" method="post">
-        <input type="text" name="username" autocomplete="off" autofocus="off" placeholder="Name">
-
+        <div><label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="off" autofocus="off" placeholder="Name">
+        </div>
+        <br>
+        <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="off" autofocus="off" placeholder="password">
+        </div>
+        <br>
         <button type="submit">Login</button>
     </form>
 {% endblock %}
