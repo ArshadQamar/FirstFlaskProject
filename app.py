@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 from dotenv import load_dotenv
-import os
+import os, sqlite3
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -10,36 +10,64 @@ app = Flask(__name__)
 # Set the secret key from the .env file
 app.secret_key = os.getenv('SECRET_KEY')
 
-#Initializing Database
-db ={}
 
-# #home page route
+
+# Connecting to sqlite3
+def get_db():
+    connection = sqlite3.connect("app.db")
+    connection.row_factory = sqlite3.Row
+    return connection
+
+# home page route
 @app.route("/")
 def index():
     if 'username' in session:
         return f"you are logged in as {session['username']}. Go to <a href='{url_for('home')}'>Home</a>"
     return render_template("index.html")
 
+
 # Login route
 @app.route("/login", methods=['GET', 'POST'])
 def login():   
     if request.method == 'POST':
+
+        # connecting to database
+        connection = get_db()
+        cursor = connection.cursor()
+
         # getting user name and password
         name = request.form.get("username")
         password = request.form.get("password")  
 
-        if name in db:
-            if db[name]["password"] == password:
-                session['username'] = name
-                return redirect(url_for('home'))
-            return "incorrect password"
-        return "user not found"
+        # authenticating the user
+        try:
+            
+            #fetching user info
+            cursor.execute("SELECT * FROM users WHERE username = ?",(name,))
+            user = cursor.fetchone()
+
+            if user:
+                if user['password'] == password:
+                    session['username'] = user['username']
+                    return redirect(url_for('home'))
+                
+                return "Incorrect password"
+            
+            return "User does not exist"
+        
+        except Exception as e:
+            return f"An error has occured {e}"
+
+        finally:
+            connection.close()
 
     if 'username' in session:
         #Output after GET request
         return redirect(url_for('home'))                            
     
     return render_template("login.html")
+
+
 
 # Home page
 @app.route("/home")
@@ -54,7 +82,9 @@ def home():
         return redirect(url_for("login"))                           
     
     # returning home.html by injecting name variable of home route to name variable present in html jinja template
-    return render_template("home.html", name=name)                  
+    return render_template("home.html", name=name)
+
+
 
 # Logout
 @app.route("/logout")
@@ -63,29 +93,54 @@ def logout():
     session.pop("username", None)                                    
     return redirect(url_for('login'))
 
+
+
 # Sign up Form
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     
     if request.method == 'POST':
+
+        #connecting to database
+        connection = get_db()
+        cursor = connection.cursor()
+
+        #getting username , email and password
         username = request.form.get("username")
         password = request.form.get("password")
         email = request.form.get("email")
-        
 
-        #check for duplicate username
-        if username in db:
-            return "Username already exists, please choose a different one."
+        try:
+
+            #check if username exists
+            cursor.execute("SELECT COUNT(*) FROM users WHERE username = ?", (username,))
+            dup_username = cursor.fetchone()
+
+            if dup_username[0] > 0:
+                return "Username already exists"
+
+            #check if email exists
+            cursor.execute("SELECT COUNT(*) FROM users WHERE email= ?", (email,))
+            dup_email = cursor.fetchone()
+
+            if dup_email[0] > 0:
+                return "Email already exists"
+            
+            #Inserting new user to the database
+            cursor.execute("INSERT INTO users (username ,email, password) VALUES (?, ?, ?)",(username, email, password))
+            
+            # Commit the changes to the database
+            connection.commit()
+
+            return f"Signed up successfully, proceed to <a href='{url_for('login')}'>login</a>"
         
-        #check for duplicate email
-        for user in db.values():
-            if user[email] == email:
-                return "Email already exists, please try a different one."
-        
-        #store data of the user
-        db[username]={"email": email, "password":password}
-        print(db)
-        return f"Signed up successfully, proceed to <a href='{url_for('login')}'>login</a>"
+        except Exception as e:
+            return f"an error occurred {e}"
+
+
+        finally:
+            # closing the connection
+            connection.close()
         
 
     return render_template("signup.html")
