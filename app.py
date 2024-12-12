@@ -1,22 +1,30 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 from dotenv import load_dotenv
+from app_db import initialize_db
 import os, sqlite3
 
 # Load environment variables from the .env file
 load_dotenv()
 
-app = Flask(__name__)
+# Check if the database file exists
+if not os.path.exists("app.db"):
+    print("Database file not found. Initializing database...")
+    initialize_db()  # Call the function from app_db to create the database
+    print("Database initialized successfully!")
 
-# Set the secret key from the .env file
-app.secret_key = os.getenv('SECRET_KEY')
-
-
-
+    
 # Connecting to sqlite3
 def get_db():
     connection = sqlite3.connect("app.db")
     connection.row_factory = sqlite3.Row
     return connection
+
+
+#initializing flask app
+app = Flask(__name__)
+
+# Set the secret key from the .env file
+app.secret_key = os.getenv('SECRET_KEY')
 
 # home page route
 @app.route("/")
