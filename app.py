@@ -12,7 +12,7 @@ if not os.path.exists("app.db"):
     initialize_db()  # Call the function from app_db to create the database
     print("Database initialized successfully!")
 
-    
+
 # Connecting to sqlite3
 def get_db():
     connection = sqlite3.connect("app.db")
@@ -84,7 +84,6 @@ def home():
     # getting the username from the session started and storing it in name
     name = session.get("username")
                                                    
-    
     if not name:
     # returning login page if there's no session
         return redirect(url_for("login"))                           
@@ -152,3 +151,31 @@ def signup():
         
 
     return render_template("signup.html")
+
+@app.route('/profile', methods=['GET', 'POST'])
+def profile():
+
+    #getting the user id stored in session
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    print(username)
+    #connecting to database
+    connection = get_db()
+    cursor = connection.cursor()
+
+    # Query the database for user data based on the user_id
+    cursor.execute("SELECT * FROM users where username = ?", (username,))
+    user = cursor.fetchone()
+
+    connection.close()
+
+    # If user data is found, return the user data
+    if username:
+        return f"User Data: Username: {user['username']}, Email: {user['email']}, ID: {user['id']}"
+    else:
+        return "User not found."
+
+    
+
