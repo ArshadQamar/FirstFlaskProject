@@ -160,22 +160,30 @@ def profile():
         return redirect(url_for('login'))
 
     username = session['username']
-    print(username)
-    #connecting to database
-    connection = get_db()
-    cursor = connection.cursor()
+    try:
+        #connecting to database
+        connection = get_db()
+        cursor = connection.cursor()
+        # Query the database for user data based on the user_id
+        cursor.execute("SELECT * FROM users where username = ?", (username,))
+        user = cursor.fetchone()
 
-    # Query the database for user data based on the user_id
-    cursor.execute("SELECT * FROM users where username = ?", (username,))
-    user = cursor.fetchone()
+    except Exception as e:
+        return f"An error occured {e}"
 
-    connection.close()
+    finally:
+        connection.close()
 
     # If user data is found, return the user data
-    if username:
-        return f"User Data: Username: {user['username']}, Email: {user['email']}, ID: {user['id']}"
+    if user:
+        return render_template("profile.html", user=user)
     else:
         return "User not found."
+    
+if request.method == 'POST':
+    
+    
+    
 
     
 

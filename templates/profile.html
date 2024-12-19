@@ -1,2 +1,29 @@
 {% extends 'index.html' %}
 
+{% block content %}
+
+<title>profile</title>
+<h1> Your profile </h1>
+
+<form action="post">
+    <table>
+        <tr>
+                <th>Field</th>
+                <th>Value</th>
+        </tr> 
+        <tr>
+                <td>Username</td>
+                <td><input type="text" name="username" value="{{ user['username'] }}"></td>
+        </tr>
+        <tr>
+                <td>Email</td>
+                <td><input type="email" name="email" value="{{ user['email'] }}"></td>
+        </tr>
+        </table>
+    <br>
+    <button type="submit">Update</button>
+</form>
+
+
+
+{% endblock %}
