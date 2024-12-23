@@ -168,19 +168,50 @@ def profile():
         cursor.execute("SELECT * FROM users where username = ?", (username,))
         user = cursor.fetchone()
 
+
+        if request.method == 'POST':
+            new_username = request.form.get("username")
+            new_email = request.form.get("email")
+            new_password = request.form.get("password")
+
+            if new_username:
+                cursor.execute("SELECT * FROM users WHERE username = ?",(new_username,))
+                if cursor.fetchone():
+                    return "Username already exists"
+                cursor.execute("UPDATE users SET username = ? WHERE username = ?",(new_username, username))
+                print(f"Updated username to {new_username}")
+                session['username'] = new_username
+                connection.commit()
+                return "username updated successfully"
+
+            if new_email:
+                cursor.execute("SELECT * FROM users WHERE username = ?",(new_email,))
+                if cursor.fetchone():
+                    return "Username already exists"
+                cursor.execute("UPDATE users SET email = ? WHERE email ' ?",(new_email, new_email))
+                connection.commit()
+                return "email updated successfully"
+
+            if new_password:
+                cursor.execute("UPDATE users SET password = ? WHERE username = ?",(new_password, username))
+                connection.commit()
+                return "password updated successfully"
+           # If user data is found, return the user data
+     
     except Exception as e:
         return f"An error occured {e}"
 
     finally:
         connection.close()
 
-    # If user data is found, return the user data
+        # If user data is found, return the user data
     if user:
         return render_template("profile.html", user=user)
     else:
         return "User not found."
+
+ 
     
-if request.method == 'POST':
     
     
     
