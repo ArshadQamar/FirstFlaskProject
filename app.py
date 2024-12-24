@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 from dotenv import load_dotenv
-from app_db import initialize_db
+from app_db import initialize_db, initialize_message_table
 import os, sqlite3
 
 # Load environment variables from the .env file
@@ -12,6 +12,8 @@ if not os.path.exists("app.db"):
     initialize_db()  # Call the function from app_db to create the database
     print("Database initialized successfully!")
 
+# Check if the message table exists
+initialize_message_table()
 
 # Connecting to sqlite3
 def get_db():
