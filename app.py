@@ -212,7 +212,9 @@ def profile():
     else:
         return "User not found."
 
- 
+@app.route('/messages', methods = ['GET', 'POST'])
+def messages():
+    return render_template("messages.html")
     
     
     
