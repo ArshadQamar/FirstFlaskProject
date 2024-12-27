@@ -40,7 +40,7 @@ A simple social networking application built using Flask and SQLite. The applica
 5. Run the application:
     ```bash
     flask run
-    The app will be available at http://127.0.0.1:5000/.
+ The app will be available at http://127.0.0.1:5000/.
 
 ## Usage
 - **Login**: Users can log in using their username and password.
