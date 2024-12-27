@@ -214,7 +214,42 @@ def profile():
 
 @app.route('/messages', methods = ['GET', 'POST'])
 def messages():
-    return render_template("messages.html")
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    
+    if request.method == 'POST':
+        recipient = request.form.get('recipient')
+        message = request.form.get('message')
+        sender = session['username']
+
+        try:
+            connection = get_db()
+            cursor = connection.cursor()
+            cursor.execute("SELECT * FROM users WHERE username = ?", (recipient,))
+            if cursor.fetchone():
+                cursor.execute("INSERT INTO messages (sender_username, receiver_username, message) VALUES (?, ?, ?)", (sender, recipient, message))
+                connection.commit()
+                return "Message sent successfully"
+            return "Recipent not found"
+        except Exception as e:
+            return f"An error occured {e}"
+        finally:
+            connection.close()
+
+
+    user = session['username']
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM messages WHERE receiver_username = ?", (user,))
+        messages = cursor.fetchall()
+
+    except Exception as e:
+        return f"An error occured {e}"
+    finally:
+        connection.close()
+    
+    return render_template("messages.html", messages=messages)
     
     
     

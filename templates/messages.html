@@ -4,8 +4,8 @@
 
 <h2>Send a Message</h2>
 <form action="/messages" method="post">
-    <label for="recipent">Recipient Username</label>
-    <input type="text" name="recipent" id="recipent" required placeholder="Enter Recipient Username">
+    <label for="recipient">Recipient Username</label>
+    <input type="text" name="recipient" id="recipient" required placeholder="Enter Recipient Username">
 
     <label for="message">Message</label>
     <textarea name="message" id="message" cols="50" rows="4" placeholder="Enter Message" required></textarea>
@@ -19,7 +19,7 @@
     <div id="chat-history">
         {% for msg in messages %}
             <div class="message">
-                <p><strong>{{msg.sender}}</strong>{{msg.message}}</p>
+                <p><strong>{{msg.sender_username}}</strong>: {{msg.message}}</p>
                 <small>sent at: {{msg.timestamp}}</small>
             </div>
         {% endfor %}
