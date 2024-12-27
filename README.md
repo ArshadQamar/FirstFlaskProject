@@ -34,8 +34,8 @@ A simple social networking application built using Flask and SQLite. The applica
     pip install -r requirements.txt
 
 4. Set up the database:
-    Ensure SQLite is available on your system.
-    The app automatically creates the necessary database tables on first run.
+    - Ensure SQLite is available on your system.
+    - The app automatically creates the necessary database tables on first run.
 
 5. Run the application:
     ```bash
