@@ -11,6 +11,17 @@
 
     {% if name %}
         <p> Welcome {{name}}.</p>
+        <br>
+        <p><strong> Create a Post</strong></p>
+        <form action="/home" method="post">
+            <label for="Text">Post Text</label>
+            <textarea name="post_text" id="post_text" rows="4" cols="50" placeholder="Write your thoughts"></textarea>
+
+            <label for="post_image">Upload an Image</label>
+            <input type="file" name="post_image" id="post_image">
+            <button type="submit">Post</button>
+
+        </form>
         <a href="/logout">
             <button>Logout</button>
         </a>

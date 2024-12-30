@@ -80,7 +80,7 @@ def login():
 
 
 # Home page
-@app.route("/home")
+@app.route("/home", methods=['GET', 'POST'])
 def home():
 
     # getting the username from the session started and storing it in name
@@ -88,8 +88,15 @@ def home():
                                                    
     if not name:
     # returning login page if there's no session
-        return redirect(url_for("login"))                           
-    
+        return redirect(url_for("login"))
+
+    if request.method == 'POST':
+       text = request.form.get('post_text')
+       file = request.files.get('post_image')
+       if not text and not file:
+           return "Both fields can not be empty"
+
+
     # returning home.html by injecting name variable of home route to name variable present in html jinja template
     return render_template("home.html", name=name)
 
