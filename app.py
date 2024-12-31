@@ -1,7 +1,9 @@
 from flask import Flask, redirect, render_template, request, url_for, session
 from dotenv import load_dotenv
-from app_db import initialize_db, initialize_message_table
+from app_db import initialize_db, initialize_message_table, initialize_post_table
 import os, sqlite3
+
+
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -15,6 +17,9 @@ if not os.path.exists("app.db"):
 # Check if the message table exists
 initialize_message_table()
 
+# Check if the posts table exists
+initialize_post_table()
+
 # Connecting to sqlite3
 def get_db():
     connection = sqlite3.connect("app.db")
@@ -24,6 +29,10 @@ def get_db():
 
 #initializing flask app
 app = Flask(__name__)
+
+upload_folder = 'static/uploads'
+allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
+app.config['upload_folder'] = upload_folder
 
 # Set the secret key from the .env file
 app.secret_key = os.getenv('SECRET_KEY')
@@ -93,13 +102,17 @@ def home():
     if request.method == 'POST':
        text = request.form.get('post_text')
        file = request.files.get('post_image')
-       if not text and not file:
+       print(text, file)
+       if not text and not file :
            return "Both fields can not be empty"
-
+       if file:
+           check_ext = file.filename.rsplit('.', 1)[1].lower()
+           if check_ext not in allowed_extensions:
+               return "format not supported for now"
+           file.save(os.path.join(app.config['upload_folder'], file.filename))
 
     # returning home.html by injecting name variable of home route to name variable present in html jinja template
     return render_template("home.html", name=name)
-
 
 
 # Logout

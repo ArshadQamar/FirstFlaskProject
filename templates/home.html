@@ -13,7 +13,7 @@
         <p> Welcome {{name}}.</p>
         <br>
         <p><strong> Create a Post</strong></p>
-        <form action="/home" method="post">
+        <form action="/home" method="post" enctype="multipart/form-data">
             <label for="Text">Post Text</label>
             <textarea name="post_text" id="post_text" rows="4" cols="50" placeholder="Write your thoughts"></textarea>
 

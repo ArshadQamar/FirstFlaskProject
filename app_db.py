@@ -51,3 +51,18 @@ def initialize_message_table():
 
         # Close the connection to the database
         connection.close()
+def initialize_post_table():
+    if os.path.exists('app.db'):
+        connection = sqlite3.connect('app.db')
+        cursor = connection.cursor()
+        cursor.execute(''' CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,     
+            post_text TEXT,
+            post_image TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (username) REFERENCES users(username) 
+            );
+            ''')
+        connection.commit()
+        connection.close()
