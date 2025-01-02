@@ -102,7 +102,8 @@ def home():
     if request.method == 'POST':
        text = request.form.get('post_text')
        file = request.files.get('post_image')
-       print(text, file)
+       file_path = None
+       query = "INSERT INTO posts (username, post_text, post_image) VALUES (?, ?, ?)"
        if not text and not file :
            return "Both fields can not be empty"
        if file:
@@ -110,9 +111,31 @@ def home():
            if check_ext not in allowed_extensions:
                return "format not supported for now"
            file.save(os.path.join(app.config['upload_folder'], file.filename))
+           file_path = f"/static/uploads/{file.filename}"
+           print(file_path)
 
+       try:
+           connection = get_db()
+           cursor = connection.cursor()
+           cursor.execute(query, (name, text, file_path))
+           connection.commit()
+           return "Post created successfully"
+       except Exception as e:
+           return f"An error occured {e}"
+       finally:
+           connection.close()
+     
+    try:
+        connection = get_db()
+        cursor = connection.cursor()
+        cursor.execute("SELECT * FROM posts ORDER BY timestamp DESC")
+        posts = cursor.fetchall()
+    except Exception as e:
+        return f"An error occured {e}"
+    finally:
+        connection.close()
     # returning home.html by injecting name variable of home route to name variable present in html jinja template
-    return render_template("home.html", name=name)
+    return render_template("home.html", name=name, posts=posts)
 
 
 # Logout
