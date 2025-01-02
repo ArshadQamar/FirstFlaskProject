@@ -6,6 +6,9 @@
         
         <a href="/profile" id="profile" >Profile</a>
         <a href="/messages" id="messages">Messages</a>
+        <a href="/logout">
+            <button>Logout</button>
+        </a>
     
     </div>
 
@@ -25,9 +28,22 @@
         <a href="/logout">
             <button>Logout</button>
         </a>
+        <h2>Posts</h2>
+        <div class="posts">
+            {% for post in posts %}
+                <div>
+                    <p><strong>{{post[1]}}</strong> - {{post[4]}}</p>
+                    <p>{{post[2]}}</p>
+                    {% if post[3] %}
+                        <img src="{{post[3]}}" alt="post image" max-width="100px"
+                    {% endif %}
+                   
+                </div>
+                
+            {% endfor %}
 
-    <!-- {% else %}
-        <p>Enter your <a href="login">Name</a></p>
+        </div>
+    {% endif %}
 
-    {% endif %} -->
+
 {% endblock %}
