@@ -31,6 +31,10 @@ def get_db():
 app = Flask(__name__)
 
 upload_folder = 'static/uploads'
+if not os.path.exists('/static/uploads'):
+    os.makedirs('/static/uploads')
+    print("required folders created")
+
 allowed_extensions = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['upload_folder'] = upload_folder
 
